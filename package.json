@@ -1,0 +1,9 @@
+{
+  "name": "node-redis-event",
+  "version": "0.0.1",
+  "description": "Distributed pub/sub events based on redis",
+  "engine": ">= node 0.10.0",
+  "dependencies": {
+    "redis": ">= 0.8.3"
+	}
+}
