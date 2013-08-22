@@ -10,6 +10,16 @@ function RedisEvent(host, channelsList) {
 
 	self._connectedCount=0;
 
+	if (!channelsList || channelsList.length==0) {
+		throw new Error("No channels specified to RedisEvent");
+		return;
+	}
+
+	if (!host) {
+		throw new Error("No hostname specified to RedisEvent");
+		return;
+	}
+
 	this.channelsList = channelsList;
 
 	this.pubRedis = redis.createClient(
