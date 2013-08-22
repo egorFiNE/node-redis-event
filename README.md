@@ -8,7 +8,7 @@ Supports channels (sort of namespaces). This code is heavily used 24x7 on a thou
 # SYNOPSIS
 
 ```javascript
-var RedisEvent = require('../index.js');
+var RedisEvent = require('redis-event');
 
 var ev = new RedisEvent('redis-host', ['updates', 'stats']);
 ev.on('ready', function() {
