@@ -3,25 +3,32 @@ var
 	events = require('events'),
 	redis = require('redis');
 
-function RedisEvent(host, channelsList) {
+function RedisEvent(channelsList, options) {
 	events.EventEmitter.call(this);
 
-	var self=this;
-
-	self._connectedCount=0;
-
-	if (!channelsList || channelsList.length === 0) {
-		throw new Error("No channels specified to RedisEvent");
+	if (options instanceof Array && typeof channelsList === "string") {
+		// Legacy support for when 'channelsList' was a second parameter and 'hostname' first
+		var tmp = options;
+		options = {
+			host: channelsList
+		};
+		channelsList = tmp;
 	}
 
-	if (!host) {
-		throw new Error("No hostname specified to RedisEvent");
+	options = options || {};
+
+	var self = this;
+
+	self._connectedCount = 0;
+
+	if (!channelsList || !(channelsList instanceof Array) || channelsList.length === 0) {
+		throw new Error("No channels specified to RedisEvent");
 	}
 
 	this.channelsList = channelsList;
 
 	this.pubRedis = redis.createClient(
-		6379, host, {
+		options.port || 6379, options.host || '127.0.0.1', {
 			enable_offline_queue: false,
 			retry_max_delay: 10000,
 			max_attempts: 10000,
@@ -38,7 +45,7 @@ function RedisEvent(host, channelsList) {
 	this.pubRedis.on('end', function() {self._connectedCount--; });
 
 	this.subRedis = redis.createClient(
-		6379, host, {
+		options.port || 6379, options.host || '127.0.0.1', {
 			enable_offline_queue: false,
 			retry_max_delay: 10000,
 			max_attempts: 10000,
