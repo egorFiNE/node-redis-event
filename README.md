@@ -13,8 +13,9 @@ var RedisEvent = require('redis-event');
 var ev = new RedisEvent(
 	['updates', 'stats'],
 	{
-		host: 'redis host (defaults to 127.0.0.1)',
-		port: 'redis port (defaults to 6379)'
+		host: 'redis-host.example.com',
+		port: 9999,
+		password: 'my-secret-password'
 	}
 );
 ev.on('ready', function() {
@@ -54,6 +55,9 @@ __Arguments__
 * `options` - optional object that may have following properties:
   * `host` - redis host to connect to (defaults to 127.0.0.1)
   * `port` - redis port to connect to (defaults to 6379)
+  * `password` - key phrase used for encryption. If specified, all the communications will be encrypted.
+  Only clients witt the same password will be able to communicate. Clients with different passwords can use
+  same channel names without interfering with each other (channel name is modified based on password).
 
 ### redisEvent.pub(eventName, payload)
 
@@ -80,8 +84,4 @@ This event is emitted when redis-event has successfully connected to both redis 
 ### redisEvent.quit()
 
 Disconnect from redis. This is actually useful to quit node application.
-
-## TODO
-
-* Encryption
 
