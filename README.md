@@ -1,27 +1,34 @@
 node-redis-event
 ================
 
-Distributed node.js event emitter based on redis pub/sub. 
+Distributed node.js event emitter based on redis pub/sub.
 
-Supports channels (sort of namespaces). This code is heavily used 24x7 on a thousand-servers cluster, so it is production ready. 
+Supports channels (sort of namespaces). This code is heavily used 24x7 on a thousand-servers cluster, so it is production ready.
 
 # SYNOPSIS
 
 ```javascript
 var RedisEvent = require('redis-event');
 
-var ev = new RedisEvent('redis-host', ['updates', 'stats']);
+var ev = new RedisEvent(
+	['updates', 'stats'],
+	{
+		host: 'redis-host.example.com',
+		port: 9999,
+		password: 'my-secret-password'
+	}
+);
 ev.on('ready', function() {
 	ev.on('updates:server', function(data) {
 		console.log("Host %s updated to %d", data.hostname, data.count);
 	});
 
-	ev.pub('updates:test', { 
-		launchedAt: new Date() 
+	ev.pub('updates:test', {
+		launchedAt: new Date()
 	});
 
-	ev.pub('stats:date', { 
-		now: new Date() 
+	ev.pub('stats:date', {
+		now: new Date()
 	});
 
 	ev.on('updates:shutdown', function(data) {
@@ -30,7 +37,7 @@ ev.on('ready', function() {
 });
 ```
 
-## Installation 
+## Installation
 
 ```
 npm install redis-event
@@ -38,25 +45,30 @@ npm install redis-event
 
 ## API
 
-### new RedisEvent(hostname, [channel, channel, channel...])
+### new RedisEvent([channel, channel, channel...], options)
 
-Initialise object. 
+Initialise object.
 
 __Arguments__
 
-* `hostname` - redis hostname to connect to
 * `channel` - name(s) of the redis pub/sub channel(s) to subscribe to
+* `options` - optional object that may have following properties:
+  * `host` - redis host to connect to (defaults to 127.0.0.1)
+  * `port` - redis port to connect to (defaults to 6379)
+  * `password` - key phrase used for encryption. If specified, all the communications will be encrypted.
+  Only clients witt the same password will be able to communicate. Clients with different passwords can use
+  same channel names without interfering with each other (channel name is modified based on password).
 
-### redisEvent.pub(eventName, payload) 
+### redisEvent.pub(eventName, payload)
 
-Emit network event. 
+Emit network event.
 
 __Arguments__
 
 * `eventName` - event name in form of `channel:name`, eg. `server:stats`
 * `payload` - optional JS object to add to the event. Must be serializable to JSON
 
-### redisEvent.on(eventName, function(payload)) 
+### redisEvent.on(eventName, function(payload))
 
 Subscribe to network event. Special case: `ready` event (see below).
 
@@ -67,13 +79,9 @@ __Arguments__
 
 ### redisEvent.on('ready')
 
-This event is emitted when redis-event has successfully connected to both redis sub and pub channels. You will want to emit events only after this event is fired. If also can be fired multiple times in case there was a reconnect. 
+This event is emitted when redis-event has successfully connected to both redis sub and pub channels. You will want to emit events only after this event is fired. If also can be fired multiple times in case there was a reconnect.
 
 ### redisEvent.quit()
 
-Disconnect from redis. This is actually useful to quit node application. 
-
-## TODO
-
-* Encryption
+Disconnect from redis. This is actually useful to quit node application.
 
