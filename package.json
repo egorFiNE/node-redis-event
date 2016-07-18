@@ -1,6 +1,6 @@
 {
 	"name": "redis-event",
-	"version": "0.9.0",
+	"version": "0.9.1",
 	"description": "Distributed pub/sub events based on redis",
 	"author": "Egor Egorov <me@egorfine.com>",
 	"license": "MIT",
