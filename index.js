@@ -1,4 +1,4 @@
-var 
+var
 	util = require('util'),
 	events = require('events'),
 	redis = require('redis');
@@ -10,14 +10,12 @@ function RedisEvent(host, channelsList) {
 
 	self._connectedCount=0;
 
-	if (!channelsList || channelsList.length==0) {
+	if (!channelsList || channelsList.length === 0) {
 		throw new Error("No channels specified to RedisEvent");
-		return;
 	}
 
 	if (!host) {
 		throw new Error("No hostname specified to RedisEvent");
-		return;
 	}
 
 	this.channelsList = channelsList;
@@ -68,11 +66,11 @@ RedisEvent.prototype._subscribe = function() {
 	this.channelsList.forEach(function(channelName) {
 		self.subRedis.subscribe(channelName);
 	});
-}
+};
 
 RedisEvent.prototype._onMessage = function(channel, message) {
 	var data = null, eventName = null;
-	try { 
+	try {
 		data = JSON.parse(message);
 		if (data && data.event) {
 			eventName = channel + ':' +data.event;
@@ -83,7 +81,7 @@ RedisEvent.prototype._onMessage = function(channel, message) {
 	if (data && eventName) {
 		this.emit(eventName, data.payload);
 	}
-}
+};
 
 RedisEvent.prototype.pub = function(eventName, payload) {
 	var split = eventName.split(':');
@@ -98,11 +96,11 @@ RedisEvent.prototype.pub = function(eventName, payload) {
 	};
 
 	this.pubRedis.publish(split[0], JSON.stringify(data), function(){});
-}
+};
 
 RedisEvent.prototype.quit = function() {
 	this.subRedis.quit();
 	this.pubRedis.quit();
-}
+};
 
 module.exports = RedisEvent;
