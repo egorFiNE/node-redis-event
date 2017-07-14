@@ -10,10 +10,6 @@ function RedisEvent(host, channelsList) {
 
 	self._connectedCount=0;
 
-	if (!channelsList || channelsList.length === 0) {
-		throw new Error("No channels specified to RedisEvent");
-	}
-
 	if (!host) {
 		throw new Error("No hostname specified to RedisEvent");
 	}
@@ -38,26 +34,28 @@ function RedisEvent(host, channelsList) {
 	});
 	this.pubRedis.on('end', function() {self._connectedCount--; });
 
-	this.subRedis = redis.createClient(
-		6379, host, {
-			enable_offline_queue: false,
-			no_ready_check: true,
-			retry_strategy: function (options) {
-				return 3000 + Math.round(Math.random() * 3000);
+	if(channelsList != null) {
+		this.subRedis = redis.createClient(
+			6379, host, {
+				enable_offline_queue: false,
+				no_ready_check: true,
+				retry_strategy: function (options) {
+					return 3000 + Math.round(Math.random() * 3000);
+				}
 			}
-		}
-	);
-	this.subRedis.on('error', function(e){ console.log(e); });
-	this.subRedis.on('ready', function() {
-		self._connectedCount++;
-		self._subscribe();
-		if (self._connectedCount == 2) {
-			self.emit('ready');
-		}
-	});
-	this.subRedis.on('end', function() {self._connectedCount--; });
+		);
+		this.subRedis.on('error', function(e){ console.log(e); });
+		this.subRedis.on('ready', function() {
+			self._connectedCount++;
+			self._subscribe();
+			if (self._connectedCount == 2) {
+				self.emit('ready');
+			}
+		});
+		this.subRedis.on('end', function() {self._connectedCount--; });
 
-	this.subRedis.on("message", this._onMessage.bind(this));
+		this.subRedis.on("message", this._onMessage.bind(this));
+	}
 }
 util.inherits(RedisEvent, events.EventEmitter);
 
