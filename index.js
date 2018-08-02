@@ -22,7 +22,11 @@ function RedisEvent(host, channelsList) {
 
 	this.pubRedis = redis.createClient(
 		6379, host, {
+			return_buffers: false,
+			detect_buffers: false,
+			socket_keepalive: true,
 			enable_offline_queue: false,
+			retry_unfulfilled_commands: false,
 			no_ready_check: true,
 			retry_strategy: function (options) {
 				return 3000 + Math.round(Math.random() * 3000);
@@ -40,7 +44,11 @@ function RedisEvent(host, channelsList) {
 
 	this.subRedis = redis.createClient(
 		6379, host, {
+			return_buffers: false,
+			detect_buffers: false,
+			socket_keepalive: true,
 			enable_offline_queue: false,
+			retry_unfulfilled_commands: false,
 			no_ready_check: true,
 			retry_strategy: function (options) {
 				return 3000 + Math.round(Math.random() * 3000);
