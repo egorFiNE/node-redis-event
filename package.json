@@ -1,29 +1,28 @@
 {
 	"name": "redis-event",
-	"version": "0.9.1",
+	"version": "0.10.0",
 	"description": "Distributed pub/sub events based on redis",
 	"author": "Egor Egorov <me@egorfine.com>",
 	"license": "MIT",
-
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/egorFiNE/node-redis-event.git"
 	},
-
 	"keywords": [
 		"redis",
 		"event",
 		"eventemitter",
 		"pubsub"
 	],
-
-	"engine": ">= node 0.10",
-
 	"devDependencies": {
-		"nodeunit"    :  ">= 0.7.x"
-	},  
-
+		"eslint": "^5.2.0",
+		"mocha": "^5.2.0"
+	},
 	"dependencies": {
-		"redis": ">= 0.8.x"
-	}
+		"redis": "^2.8.0"
+	},
+  "scripts": {
+    "test": "mocha test/",
+    "lint": "eslint index.js"
+  }
 }

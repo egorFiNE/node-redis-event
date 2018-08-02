@@ -1,14 +1,18 @@
-var RedisEvent = require('../index.js');
+const assert = require('assert');
+const RedisEvent = require('../index.js');
 
-exports.main = function(test) {
-	var ev = new RedisEvent('localhost', ['main']);
-	ev.on('ready', function() {
-		ev.on('main:hello', function(data) {
-			test.deepEqual(data, {name: 'vasya'});
-			ev.quit();
-			test.done();
+const STRUCTURE = { name: 'jane' };
+
+const redisEvent = new RedisEvent('localhost', ['main']);
+
+describe('RedisEvent', () => {
+	it('should emit the very same structure that has been pub\'d', done => {
+		redisEvent.on('main:hello', function(data) {
+			assert.equal(JSON.stringify(data), JSON.stringify(STRUCTURE));
+			redisEvent.quit();
+			done();
 		});
 
-		ev.pub('main:hello', {name: 'vasya'});
+		redisEvent.pub('main:hello', STRUCTURE);
 	});
-};
+});
