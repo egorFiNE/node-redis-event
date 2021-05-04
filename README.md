@@ -1,9 +1,11 @@
 node-redis-event
 ================
 
+**This package is largely abandoned.**
+
 Distributed node.js event emitter based on redis pub/sub.
 
-Supports channels (sort of namespaces). This code is heavily used 24x7 on a thousand-servers cluster, so it is production ready.
+Supports channels (sort of namespaces). 
 
 # SYNOPSIS
 
